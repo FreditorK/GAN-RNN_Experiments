@@ -19,7 +19,7 @@ import matplotlib.animation as animation
 
 class Data_Provider:
 
-    def __init__(self, dataroot="celeba", workers=2, batch_size=128, image_size=64):
+    def __init__(self, dataroot="~/GAN_stuff/Celebrity_GAN", workers=2, batch_size=128, image_size=64):
         dataset = dset.ImageFolder(root=dataroot,
                                    transform=transforms.Compose([
                                        transforms.Resize(image_size),

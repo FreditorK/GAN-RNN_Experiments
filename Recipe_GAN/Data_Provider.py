@@ -1,42 +1,31 @@
-import numpy as np
-import pickle
 import torch.nn.parallel
-import torch.backends.cudnn as cudnn
-import torch.optim as optim
 import torch.utils.data
-import torchvision.datasets as dset
-import torchvision.transforms as transforms
-import torchvision.utils as vutils
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 
 
 class Data_Provider:
 
-    def __init__(self):
+    def __init__(self, batch_size):
         with np.load('recipes.npz', allow_pickle=True) as data:
-            self.recipes = data['recipes']
-            self.ingredients = data['ingredients']
+            recipes = data['recipes']
+            ingredients = data['ingredients']
 
-        self.dataloader = torch.utils.data.DataLoader(RecipeDataset(self.recipes, len(self.ingredients)), batch_size=64, num_workers=2)
-        print(next(iter(self.dataloader)))
+        self.num_ingredients = len(ingredients)
+        self.dataloader = torch.utils.data.DataLoader(Recipe_Dataset(recipes, self.num_ingredients), batch_size=batch_size, num_workers=2)
 
 
-class RecipeDataset(torch.utils.data.Dataset):
-    def __init__(self, data, N):
+class Recipe_Dataset(torch.utils.data.Dataset):
+    def __init__(self, recipes, num_ingredients):
         super(torch.utils.data.Dataset).__init__()
-        self.data = data
-        self.N = N
+        self.data = recipes
+        self.num_ingredients = num_ingredients
 
     def __len__(self):
         return len(self.data)
 
     def __getitem__(self, idx):
-        element = self.data[idx]
-        vec = np.zeros(self.N)
+        element = self.data[idx].astype(int)
+        vec = np.zeros(self.num_ingredients)
         vec[element] = 1
         return vec
 
-
-data_provider = Data_Provider()

@@ -1,4 +1,5 @@
 from Module import Module
 
 module = Module()
-module.train_module()
+print(module.generate_recipe())
+#module.train_module()

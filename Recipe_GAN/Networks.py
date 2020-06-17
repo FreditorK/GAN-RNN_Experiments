@@ -24,8 +24,29 @@ class Generator(nn.Module):
             nn.Sigmoid()
         )
 
+        try:
+            self.load()
+            print("Generator found")
+        except:
+            self.weights_init()
+            print("No Generator was found")
+
     def forward(self, input):
         return torch.round(self.main(input))
+
+    def weights_init(self):
+        classname = self.__class__.__name__
+        if classname.find('Linear') != -1:
+            nn.init.normal_(self.weight.data, 0.0, 0.02)
+        elif classname.find('BatchNorm') != -1:
+            nn.init.normal_(self.weight.data, 1.0, 0.02)
+            nn.init.constant_(self.bias.data, 0)
+
+    def save(self):
+        torch.save(self.state_dict(), 'generator.pth')
+
+    def load(self):
+        self.load_state_dict(torch.load('generator.pth'))
 
 
 class Discriminator(nn.Module):
@@ -42,5 +63,26 @@ class Discriminator(nn.Module):
             nn.Sigmoid()
         )
 
+        try:
+            self.load()
+            print("Discriminator found")
+        except:
+            self.weights_init()
+            print("No Discriminator was found")
+
     def forward(self, input):
         return self.main(input)
+
+    def weights_init(self):
+        classname = self.__class__.__name__
+        if classname.find('Linear') != -1:
+            nn.init.normal_(self.weight.data, 0.0, 0.02)
+        elif classname.find('BatchNorm') != -1:
+            nn.init.normal_(self.weight.data, 1.0, 0.02)
+            nn.init.constant_(self.bias.data, 0)
+
+    def save(self):
+        torch.save(self.state_dict(), 'discriminator.pth')
+
+    def load(self):
+        self.load_state_dict(torch.load('discriminator.pth'))

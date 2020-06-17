@@ -13,10 +13,7 @@ class Module:
         self.num_epochs = num_epochs
         self.batch_size = batch_size
         self.netG = Generator(noise_vector_size, self.data_provider.num_ingredients).to(self.device)
-        self.netG.apply(self.weights_init)
-
         self.netD = Discriminator(self.data_provider.num_ingredients).to(self.device)
-        self.netD.apply(self.weights_init)
 
         self.criterion = nn.BCELoss()
         self.fixed_noise = torch.randn(batch_size, noise_vector_size, device=self.device)
@@ -29,13 +26,11 @@ class Module:
 
         self.recipe_list = []
 
-    def weights_init(self, m):
-        classname = m.__class__.__name__
-        if classname.find('Linear') != -1:
-            nn.init.normal_(m.weight.data, 0.0, 0.02)
-        elif classname.find('BatchNorm') != -1:
-            nn.init.normal_(m.weight.data, 1.0, 0.02)
-            nn.init.constant_(m.bias.data, 0)
+    def generate_recipe(self):
+        noise = torch.randn(1, self.noise_vector_size, device=self.device)
+        fake = self.netG(noise).detach().numpy().flatten()
+        return self.data_provider.ingredients[[idx for idx, v in enumerate(fake) if v]]
+
 
     def train_module(self):
         G_losses = []
@@ -85,3 +80,6 @@ class Module:
                     self.recipe_list.append(vutils.make_grid(fake, padding=2, normalize=True))
 
                 iters += 1
+
+        self.netG.save()
+        self.netD.save()

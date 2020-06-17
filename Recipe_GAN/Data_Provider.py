@@ -5,12 +5,12 @@ import numpy as np
 
 class Data_Provider:
 
-    def __init__(self, batch_size):
+    def __init__(self, batch_size, num_batches=100):
         with np.load('recipes.npz', allow_pickle=True) as data:
-            recipes = data['recipes']
-            ingredients = data['ingredients']
+            recipes = data['recipes'][:num_batches*batch_size]
+            self.ingredients = data['ingredients']
 
-        self.num_ingredients = len(ingredients)
+        self.num_ingredients = len(self.ingredients)
         self.dataloader = torch.utils.data.DataLoader(Recipe_Dataset(recipes, self.num_ingredients), batch_size=batch_size, num_workers=2)
 
 

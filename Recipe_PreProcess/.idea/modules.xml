@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Celebrity_GAN.iml" filepath="$PROJECT_DIR$/.idea/Celebrity_GAN.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Recipe_PreProcess.iml" filepath="$PROJECT_DIR$/.idea/Recipe_PreProcess.iml" />
     </modules>
   </component>
 </project>
